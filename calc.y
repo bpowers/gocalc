@@ -131,7 +131,7 @@ func main() {
 		var ok bool
 
 		fmt.Printf("equation: ")
-		if eqn, ok = readline(fi); !ok {
+		if eqn, ok = readline(fi); ok {
 			CalcParse(&CalcLex{s: eqn})
 		} else {
 			break
