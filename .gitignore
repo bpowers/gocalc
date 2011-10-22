@@ -1,0 +1,8 @@
+*~
+y.output
+calc
+calc.go
+*.o
+*.a
+*.[568vq]
+[568vq].out

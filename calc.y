@@ -12,25 +12,13 @@ import (
 var regs = make([]int, 26)
 var base int
 
-
-var fi *bufio.Reader // input
-var line string      // current input line
-var lineno int       // current input line number
-var linep int        // index to next rune in unput
-var nerrors int      // error count
-var peekrune int     // backup runt from input
-var sym string
-var vflag bool
-
 %}
 
-%union {
-	numb int
-}
+%union{}
 
-%type <numb> expr number
+%type <yys> expr number
 
-%token <numb> DIGIT LETTER
+%token <yys> DIGIT LETTER
 
 %left  '|'
 %left  '&'
@@ -42,7 +30,6 @@ var vflag bool
 
 list    : /* empty */
         | list stat '\n'
-        | list error '\n'
         ;
 
 stat :    expr
@@ -96,7 +83,7 @@ type CalcLex struct {
 }
 
 
-func (l *CalcLex) Lex(lval *calc_SymType) int {
+func (l *CalcLex) Lex(lval *CalcSymType) int {
 	var c int = ' '
 	for c == ' ' {
 		if l.pos == len(l.s) {
@@ -107,10 +94,10 @@ func (l *CalcLex) Lex(lval *calc_SymType) int {
 	}
 
 	if unicode.IsDigit(c) {
-		lval.numb = c - '0'
+		lval.yys = c - '0'
 		return DIGIT
 	} else if unicode.IsLower(c) {
-		lval.numb = c - 'a'
+		lval.yys = c - 'a'
 		return LETTER
 	}
 	return c
@@ -121,15 +108,16 @@ func (l *CalcLex) Error(s string) {
 }
 
 func main() {
-	fi = bufio.NewReader(os.NewFile(0, "stdin"))
 
-	for eqn, ok := readline(); ok; eqn, ok = readline() {
+	fi := bufio.NewReader(os.NewFile(0, "stdin"))
+
+	for eqn, ok := readline(fi); ok; eqn, ok = readline(fi) {
 		fmt.Print("calculating: ", eqn)
-		calc_Parse(&CalcLex{eqn, 0})
+		CalcParse(&CalcLex{eqn, 0})
 	}
 }
 
-func readline() (string, bool) {
+func readline(fi *bufio.Reader) (string, bool) {
 	s, err := fi.ReadString('\n')
 	if err != nil {
 		return "", false
