@@ -100,23 +100,23 @@ type CalcLex struct {
 
 
 func (l *CalcLex) Lex(lval *CalcSymType) int {
-	var c int = ' '
+	var c rune = ' '
 	for c == ' ' {
 		if l.pos == len(l.s) {
 			return 0
 		}
-		c = int(l.s[l.pos])
+		c = rune(l.s[l.pos])
 		l.pos += 1
 	}
 
 	if unicode.IsDigit(c) {
-		lval.val = c - '0'
+		lval.val = int(c - '0')
 		return DIGIT
 	} else if unicode.IsLower(c) {
-		lval.val = c - 'a'
+		lval.val = int(c - 'a')
 		return LETTER
 	}
-	return c
+	return int(c)
 }
 
 func (l *CalcLex) Error(s string) {

@@ -6,3 +6,4 @@ calc.go
 *.a
 *.[568vq]
 [568vq].out
+gocalc
